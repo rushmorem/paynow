@@ -1,16 +1,29 @@
 [package]
 name = "paynow"
+description = "Rust support for Paynow Zimbabwe's HTTP API"
 version = "0.1.0"
-authors = ["rushmorem"]
+license = "MIT/Apache-2.0"
+repository = "https://github.com/rushmorem/paynow"
+documentation = "https://docs.rs/paynow"
+readme = "README.md"
+keywords = ["payment", "gateway"]
+authors = ["rushmorem <rushmore@webenchanter.com>"]
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
-reqwest = { version = "0.10", features = ["json"] }
-rust_decimal = "1"
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
-thiserror = "1"
-url = { version = "2", features = ["serde"] }
-uuid = "0.8"
+async-trait = "0.1.41"
+celes = "1.0.5"
+reqwest = "0.10.8"
+rust_decimal = "1.8.1"
+serde = { version = "1.0.117", features = ["derive"] }
+serde_urlencoded = "0.7.0"
+sha2 = "0.9.1"
+thiserror = "1.0.21"
+time = { version = "0.2.22", features = ["serde"] }
+url = { version = "2.1.1", features = ["serde"] }
+uuid = "0.8.1"
+
+[dev-dependencies]
+envy = "0.4.1"
+tokio = { version = "0.2.22", features = ["macros"] }
+uuid = { version = "0.8.1", features = ["v4", "serde"] }
