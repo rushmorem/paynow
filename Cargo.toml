@@ -14,7 +14,7 @@ edition = "2018"
 async-trait = "0.1.42"
 celes = "1.0.6"
 reqwest = "0.11.0"
-rust_decimal = "1.10.2"
+rust_decimal = "1.10.3"
 serde = { version = "1.0.123", features = ["derive"] }
 serde_urlencoded = "0.7.0"
 sha2 = "0.9.3"
