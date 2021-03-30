@@ -11,19 +11,19 @@ authors = ["rushmorem <rushmore@webenchanter.com>"]
 edition = "2018"
 
 [dependencies]
-async-trait = "0.1.42"
+async-trait = "0.1.48"
 celes = "1.0.6"
-reqwest = "0.11.0"
+reqwest = "0.11.2"
 rust_decimal = "1.10.3"
-serde = { version = "1.0.123", features = ["derive"] }
+serde = { version = "1.0.125", features = ["derive"] }
 serde_urlencoded = "0.7.0"
 sha2 = "0.9.3"
-thiserror = "1.0.23"
-time = { version = "0.2.25", features = ["serde"] }
-url = { version = "2.2.0", features = ["serde"] }
+thiserror = "1.0.24"
+time = { version = "0.2.26", features = ["serde"] }
+url = { version = "2.2.1", features = ["serde"] }
 uuid = "0.8.2"
 
 [dev-dependencies]
 envy = "0.4.2"
-tokio = { version = "1.2.0", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.4.0", features = ["macros", "rt-multi-thread"] }
 uuid = { version = "0.8.2", features = ["v4", "serde"] }
