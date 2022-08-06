@@ -1,7 +1,7 @@
 [package]
 name = "paynow"
 description = "Rust support for Paynow Zimbabwe's HTTP API"
-version = "0.1.2-alpha.0"
+version = "0.2.0-alpha.0"
 license = "MIT/Apache-2.0"
 repository = "https://github.com/rushmorem/paynow"
 documentation = "https://docs.rs/paynow"
@@ -11,19 +11,19 @@ authors = ["rushmorem <rushmore@webenchanter.com>"]
 edition = "2018"
 
 [dependencies]
-async-trait = "0.1.48"
-celes = "1.0.6"
-reqwest = "0.11.2"
-rust_decimal = "1.10.3"
-serde = { version = "1.0.125", features = ["derive"] }
-serde_urlencoded = "0.7.0"
-sha2 = "0.9.3"
-thiserror = "1.0.24"
-time = { version = "0.2.26", features = ["serde"] }
-url = { version = "2.2.1", features = ["serde"] }
-uuid = "0.8.2"
+async-trait = "0.1.57"
+celes = "2.2.0"
+reqwest = "0.11.11"
+rust_decimal = "1.26.1"
+serde = { version = "1.0.142", features = ["derive"] }
+serde_urlencoded = "0.7.1"
+sha2 = "0.10.2"
+thiserror = "1.0.32"
+time = { version = "0.3.12", features = ["serde", "formatting"] }
+url = { version = "2.2.2", features = ["serde"] }
+uuid = "1.1.2"
 
 [dev-dependencies]
 envy = "0.4.2"
-tokio = { version = "1.4.0", features = ["macros", "rt-multi-thread"] }
-uuid = { version = "0.8.2", features = ["v4", "serde"] }
+tokio = { version = "1.20.1", features = ["macros", "rt-multi-thread"] }
+uuid = { version = "1.1.2", features = ["v4", "serde"] }

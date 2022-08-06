@@ -172,6 +172,7 @@ pub(crate) mod error {
 
     #[derive(Debug, Clone, Deserialize)]
     pub(crate) struct Response {
+        #[allow(dead_code)]
         pub(crate) status: status::Error,
         pub(crate) error: String,
     }

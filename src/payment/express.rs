@@ -114,7 +114,7 @@ impl<'a> From<&'a Method<'a>> for MethodArgs<'a> {
                 line2: address.line2.unwrap_or(""),
                 city: address.city,
                 province: address.province.unwrap_or(""),
-                country: &address.country.long_name,
+                country: address.country.long_name,
                 ..Default::default()
             },
         }
@@ -187,7 +187,7 @@ impl Submit for &'_ Payment<'_> {
             method: self.method.name(),
             hash: client.hash(concat_express_payment!(
                 self.method.name(),
-                &self,
+                self,
                 MethodArgs::from(&self.method)
             )),
             payment: self,

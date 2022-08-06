@@ -245,4 +245,10 @@ pub enum Error {
     NotFound(String),
     #[error("Paynow returned an error")]
     Response(reqwest::StatusCode, String),
+    #[error("time format error")]
+    TimeFormat(
+        #[source]
+        #[from]
+        time::error::Format,
+    ),
 }

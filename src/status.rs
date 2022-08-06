@@ -3,7 +3,7 @@ use rust_decimal::Decimal;
 use serde::de::{self, Unexpected, Visitor};
 use serde::{Deserialize, Serialize};
 use std::fmt;
-use time::Date;
+use time::{format_description, Date};
 use url::Url;
 
 /// Whenever the status of a transaction is changed, for example payment made,
@@ -62,6 +62,7 @@ impl Update {
     }
 
     pub fn validate(&self, client: &Client) -> Result<(), crate::Error> {
+        let format = format_description::parse("[day][month repr:short][year]").unwrap();
         client.validate_hash(
             &self.hash,
             format_args!(
@@ -75,7 +76,7 @@ impl Update {
                     Some(x) => format!(
                         "{token}{expiry}",
                         token = x.token,
-                        expiry = x.expiry.format("%d%b%Y")
+                        expiry = x.expiry.format(&format)?
                     ),
                     None => String::new(),
                 },
