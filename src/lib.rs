@@ -122,12 +122,6 @@ impl Client {
             status: status::NotFound,
             hash: String,
         }
-        #[derive(Deserialize)]
-        #[serde(untagged)]
-        enum Msg {
-            Status(Update),
-            Error(NotFound),
-        }
         let id = self.id;
         let status = status::Message;
         let trace = MerchantTrace {
@@ -145,11 +139,19 @@ impl Client {
             .base
             .join("trace")
             .map_err(Error::InvalidTracePaymentUrl)?;
-        let res = self
-            .submit::<_, Msg>(endpoint, Payload::Form(&trace))
+        let status = self
+            .submit::<_, Update>(endpoint, Payload::Form(&trace))
             .await
             .map_err(|err| match err {
                 Error::UnexpectedResponse(error, msg) => {
+                    if let Ok(error) = serde_urlencoded::from_str::<'_, NotFound>(&msg) {
+                        return match self
+                            .validate_hash(&error.hash, format_args!("{}", error.status))
+                        {
+                            Ok(_) => Error::NotFound(merchant_trace.to_owned()),
+                            Err(error) => error,
+                        };
+                    }
                     match serde_urlencoded::from_str::<'_, Response>(&msg) {
                         Ok(res) => match PaymentError::from(res) {
                             PaymentError::InvalidId => Error::InvalidId(self.id),
@@ -164,16 +166,8 @@ impl Client {
                 }
                 error => error,
             })?;
-        match res {
-            Msg::Status(status) => {
-                status.validate(self)?;
-                Ok(status)
-            }
-            Msg::Error(error) => {
-                self.validate_hash(&error.hash, format_args!("{}", error.status))?;
-                Err(Error::NotFound(merchant_trace.to_owned()))
-            }
-        }
+        status.validate(self)?;
+        Ok(status)
     }
 
     fn hash(&self, msg: Arguments) -> String {
