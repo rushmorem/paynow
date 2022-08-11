@@ -24,9 +24,10 @@ macro_rules! concat_express_payment {
 
 use super::error::Error as PaymentError;
 use super::Submit;
-use crate::{status, Client, Error, Payload};
+use crate::{status, Client, Error, Hash, Payload};
 use async_trait::async_trait;
 use celes::Country;
+use secrecy::Secret;
 use serde::{Deserialize, Serialize};
 use url::Url;
 
@@ -177,7 +178,7 @@ impl Submit for &'_ Payment<'_> {
             method: &'static str,
             #[serde(flatten)]
             payment: &'a Payment<'a>,
-            hash: String,
+            hash: Secret<Hash>,
         }
         let endpoint = client
             .base
@@ -238,7 +239,7 @@ pub struct Response {
     paynow_reference: u64,
     #[serde(rename = "pollurl")]
     poll_url: Url,
-    hash: String,
+    hash: Secret<Hash>,
 }
 
 impl Response {

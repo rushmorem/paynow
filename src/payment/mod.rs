@@ -22,10 +22,11 @@ mod macros {
 
 pub mod express;
 
-use crate::{status, Client, Error, Payload};
+use crate::{status, Client, Error, Hash, Payload};
 use async_trait::async_trait;
 use error::Error as PaymentError;
 use rust_decimal::Decimal;
+use secrecy::Secret;
 use serde::{Deserialize, Serialize};
 use url::Url;
 
@@ -86,7 +87,7 @@ impl Submit for &'_ Payment<'_> {
         struct Msg<'a> {
             #[serde(flatten)]
             payment: &'a Payment<'a>,
-            hash: String,
+            hash: Secret<Hash>,
         }
         let endpoint = client
             .base
@@ -136,7 +137,7 @@ pub struct Response {
     browser_url: Url,
     #[serde(rename = "pollurl")]
     poll_url: Url,
-    hash: String,
+    hash: Secret<Hash>,
 }
 
 impl Response {

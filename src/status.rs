@@ -1,5 +1,6 @@
-use crate::Client;
+use crate::{Client, Hash};
 use rust_decimal::Decimal;
+use secrecy::Secret;
 use serde::de::{self, Unexpected, Visitor};
 use serde::{Deserialize, Serialize};
 use std::fmt;
@@ -21,7 +22,7 @@ pub struct Update {
     poll_url: Url,
     #[serde(flatten)]
     token: Option<Token>,
-    hash: String,
+    hash: Secret<Hash>,
 }
 
 impl Update {
@@ -91,7 +92,7 @@ pub(crate) struct MerchantTrace<'a> {
     #[serde(rename = "merchanttrace")]
     pub(crate) merchant_trace: &'a str,
     pub(crate) status: Message,
-    pub(crate) hash: String,
+    pub(crate) hash: Secret<Hash>,
 }
 
 /// The following fields will be returned in the status response message only if

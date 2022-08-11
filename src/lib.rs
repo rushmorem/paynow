@@ -20,6 +20,7 @@ use payment::error::{Error as PaymentError, Response};
 use payment::{express, Payment};
 use reqwest::header::CONTENT_LENGTH;
 use rust_decimal::Decimal;
+use secrecy::{CloneableSecret, DebugSecret, ExposeSecret, Secret, SerializableSecret, Zeroize};
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha512};
@@ -28,10 +29,35 @@ use std::fmt::Arguments;
 use url::Url;
 use uuid::Uuid;
 
+#[derive(Clone)]
+struct Key(Uuid);
+
+impl Zeroize for Key {
+    fn zeroize(&mut self) {
+        self.0 = Uuid::nil();
+    }
+}
+
+impl CloneableSecret for Key {}
+impl DebugSecret for Key {}
+
+#[derive(Clone, Serialize, Deserialize, Eq, Ord, PartialEq, PartialOrd)]
+struct Hash(String);
+
+impl Zeroize for Hash {
+    fn zeroize(&mut self) {
+        self.0.zeroize();
+    }
+}
+
+impl CloneableSecret for Hash {}
+impl DebugSecret for Hash {}
+impl SerializableSecret for Hash {}
+
 #[derive(Debug, Clone)]
 pub struct Client {
     id: u64,
-    key: Uuid,
+    key: Secret<Key>,
     req: reqwest::Client,
     base: Url,
 }
@@ -40,7 +66,7 @@ impl Client {
     pub fn new(id: u64, key: Uuid) -> Self {
         Self {
             id,
-            key,
+            key: Secret::new(Key(key)),
             req: reqwest::Client::new(),
             // we know this is a valid URL so this should never panic
             base: Url::parse("https://www.paynow.co.zw/interface/").unwrap(),
@@ -120,7 +146,7 @@ impl Client {
         #[derive(Deserialize)]
         struct NotFound {
             status: status::NotFound,
-            hash: String,
+            hash: Secret<Hash>,
         }
         let id = self.id;
         let status = status::Message;
@@ -170,15 +196,19 @@ impl Client {
         Ok(status)
     }
 
-    fn hash(&self, msg: Arguments) -> String {
+    fn hash(&self, msg: Arguments) -> Secret<Hash> {
         let mut hasher = Sha512::new();
-        hasher.update(format!("{msg}{key}", msg = msg, key = self.key));
-        format!("{:X}", hasher.finalize())
+        hasher.update(format!(
+            "{msg}{key}",
+            msg = msg,
+            key = self.key.expose_secret().0
+        ));
+        Secret::new(Hash(format!("{:X}", hasher.finalize())))
     }
 
-    fn validate_hash(&self, hash: &str, msg: Arguments) -> Result<(), Error> {
+    fn validate_hash(&self, hash: &Secret<Hash>, msg: Arguments) -> Result<(), Error> {
         let expected_hash = self.hash(msg);
-        if hash != expected_hash {
+        if hash.expose_secret() != expected_hash.expose_secret() {
             return Err(Error::HashMismatch(msg.to_string()));
         }
         Ok(())

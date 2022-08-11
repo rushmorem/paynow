@@ -8,18 +8,19 @@ documentation = "https://docs.rs/paynow"
 readme = "README.md"
 keywords = ["payment", "gateway"]
 authors = ["rushmorem <rushmore@webenchanter.com>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 async-trait = "0.1.57"
 celes = "2.2.0"
 reqwest = "0.11.11"
 rust_decimal = "1.26.1"
-serde = { version = "1.0.142", features = ["derive"] }
+secrecy = { version = "0.8.0", features = ["serde"] }
+serde = { version = "1.0.143", features = ["derive"] }
 serde_urlencoded = "0.7.1"
 sha2 = "0.10.2"
 thiserror = "1.0.32"
-time = { version = "0.3.12", features = ["serde", "formatting"] }
+time = { version = "0.3.13", features = ["serde", "formatting"] }
 url = { version = "2.2.2", features = ["serde"] }
 uuid = "1.1.2"
 
