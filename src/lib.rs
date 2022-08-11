@@ -63,6 +63,9 @@ pub struct Client {
 }
 
 impl Client {
+    /// Create new client
+    #[allow(clippy::missing_panics_doc)]
+    #[must_use]
     pub fn new(id: u64, key: Uuid) -> Self {
         Self {
             id,
@@ -73,6 +76,8 @@ impl Client {
         }
     }
 
+    /// Initiate a payment
+    #[must_use]
     pub fn payment<'a>(
         &self,
         reference: &'a str,
@@ -94,6 +99,8 @@ impl Client {
         }
     }
 
+    /// Initiate an express payment
+    #[must_use]
     pub fn express_payment<'a>(
         &self,
         method: express::Method<'a>,
@@ -118,6 +125,11 @@ impl Client {
         express::Payment { payment, method }
     }
 
+    /// Get status of a payment
+    ///
+    /// # Errors
+    ///
+    /// Returns an error when ID is invalid, funding source has insufficient funds etc
     pub async fn poll_status(&self, poll_url: Url) -> Result<Update, Error> {
         let status = self
             .submit::<(), Update>(poll_url, Payload::Empty)
@@ -142,6 +154,11 @@ impl Client {
         Ok(status)
     }
 
+    /// Lookup payment status
+    ///
+    /// # Errors
+    ///
+    /// Returns an error when the trace ID is not found
     pub async fn trace_payment(&self, merchant_trace: &str) -> Result<Update, Error> {
         #[derive(Deserialize)]
         struct NotFound {
@@ -219,18 +236,18 @@ impl Client {
         T: Serialize,
         O: DeserializeOwned,
     {
-        let mut req = self.req.post(endpoint);
-        req = match payload {
-            Payload::Form(payload) => req.form(payload),
-            Payload::Empty => req.header(CONTENT_LENGTH, 0),
+        let mut request = self.req.post(endpoint);
+        request = match payload {
+            Payload::Form(payload) => request.form(payload),
+            Payload::Empty => request.header(CONTENT_LENGTH, 0),
         };
-        let res = req.send().await.map_err(Error::SendingRequest)?;
-        let code = res.status();
-        let msg = res.text().await.map_err(Error::GettingText)?;
+        let response = request.send().await.map_err(Error::SendingRequest)?;
+        let code = response.status();
+        let message = response.text().await.map_err(Error::GettingText)?;
         if !code.is_success() {
-            return Err(Error::Response(code, msg));
+            return Err(Error::Response(code, message));
         }
-        serde_urlencoded::from_str(&msg).map_err(|e| Error::UnexpectedResponse(e, msg))
+        serde_urlencoded::from_str(&message).map_err(|e| Error::UnexpectedResponse(e, message))
     }
 }
 

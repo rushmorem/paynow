@@ -26,42 +26,66 @@ pub struct Update {
 }
 
 impl Update {
+    /// Get a reference to the reference :)
+    #[must_use]
     pub fn reference(&self) -> &str {
         &self.reference
     }
 
+    /// Consume reference
+    #[must_use]
     pub fn take_reference(self) -> String {
         self.reference
     }
 
+    /// Get Paynow reference
+    #[must_use]
     pub fn paynow_reference(self) -> u64 {
         self.paynow_reference
     }
 
+    /// Get amount
+    #[must_use]
     pub fn amount(self) -> Decimal {
         self.amount
     }
 
+    /// Get status
+    #[must_use]
     pub fn status(self) -> Status {
         self.status
     }
 
+    /// Get a reference to the poll URL
+    #[must_use]
     pub fn poll_url(&self) -> &Url {
         &self.poll_url
     }
 
+    /// Consume poll URL
+    #[must_use]
     pub fn take_poll_url(self) -> Url {
         self.poll_url
     }
 
+    /// Get a reference to the token
+    #[must_use]
     pub fn token(&self) -> Option<&Token> {
         self.token.as_ref()
     }
 
+    /// Consume the token
+    #[must_use]
     pub fn take_token(self) -> Option<Token> {
         self.token
     }
 
+    /// Validate status update
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the hash is invalid
+    #[allow(clippy::missing_panics_doc)]
     pub fn validate(&self, client: &Client) -> Result<(), crate::Error> {
         let format = format_description::parse("[day][month repr:short][year]").unwrap();
         client.validate_hash(
@@ -117,14 +141,20 @@ pub struct Token {
 }
 
 impl Token {
+    /// Get a reference to the token
+    #[must_use]
     pub fn token(&self) -> &str {
         &self.token
     }
 
+    /// Consume token
+    #[must_use]
     pub fn take_token(self) -> String {
         self.token
     }
 
+    /// Get expiry date
+    #[must_use]
     pub fn expiry(self) -> Date {
         self.expiry
     }

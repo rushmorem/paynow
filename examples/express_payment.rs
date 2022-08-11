@@ -17,7 +17,7 @@ struct Config {
 async fn main() -> Result<(), Box<dyn Error>> {
     let config: Config = envy::prefixed("PAYNOW_INTEGRATION_").from_env()?;
     let client = Client::new(config.id, config.key);
-    let method = Method::ecocash("0771111111");
+    let method = Method::eco_cash("0771111111");
     let reference = "c1dfbc5b-9e5b-40bf-846e-22006078a436";
     let amount = Decimal::new(30_000_00, 2);
     let result_url = Url::parse("https://example.net")?;

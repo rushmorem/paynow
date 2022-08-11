@@ -141,18 +141,26 @@ pub struct Response {
 }
 
 impl Response {
+    /// Get a reference to the browser URL
+    #[must_use]
     pub fn browser_url(&self) -> &Url {
         &self.browser_url
     }
 
+    /// Consume browser URL
+    #[must_use]
     pub fn take_browser_url(self) -> Url {
         self.browser_url
     }
 
+    /// Get reference to poll URL
+    #[must_use]
     pub fn poll_url(&self) -> &Url {
         &self.poll_url
     }
 
+    /// Consume poll URL
+    #[must_use]
     pub fn take_poll_url(self) -> Url {
         self.poll_url
     }

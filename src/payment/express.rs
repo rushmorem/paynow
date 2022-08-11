@@ -58,14 +58,20 @@ impl<'a> Method<'a> {
         }
     }
 
-    pub fn ecocash(phone: &'a str) -> Self {
+    /// Construct `EcoCash` payment method
+    #[must_use]
+    pub fn eco_cash(phone: &'a str) -> Self {
         Method::Ecocash { phone }
     }
 
-    pub fn onemoney(phone: &'a str) -> Self {
+    /// Construct `OneMoney` payment method
+    #[must_use]
+    pub fn one_money(phone: &'a str) -> Self {
         Method::OneMoney { phone }
     }
 
+    /// Construct Visa/MasterCard payment method
+    #[must_use]
     pub fn vmc(card: Card<'a>, address: Address<'a>, token: &'a str) -> Self {
         Method::VisaOrMastercard {
             card,
@@ -93,11 +99,7 @@ struct MethodArgs<'a> {
 impl<'a> From<&'a Method<'a>> for MethodArgs<'a> {
     fn from(method: &'a Method<'a>) -> Self {
         match method {
-            Method::Ecocash { phone } => Self {
-                phone,
-                ..Default::default()
-            },
-            Method::OneMoney { phone } => Self {
+            Method::Ecocash { phone } | Method::OneMoney { phone } => Self {
                 phone,
                 ..Default::default()
             },
@@ -243,22 +245,32 @@ pub struct Response {
 }
 
 impl Response {
+    /// Get a reference to instructions
+    #[must_use]
     pub fn instructions(&self) -> &str {
         &self.instructions
     }
 
+    /// Consume instructions
+    #[must_use]
     pub fn take_instructions(self) -> String {
         self.instructions
     }
 
+    /// Get Paynow reference
+    #[must_use]
     pub fn paynow_reference(self) -> u64 {
         self.paynow_reference
     }
 
+    /// Get poll URL
+    #[must_use]
     pub fn poll_url(&self) -> &Url {
         &self.poll_url
     }
 
+    /// Consume poll URL
+    #[must_use]
     pub fn take_poll_url(self) -> Url {
         self.poll_url
     }
