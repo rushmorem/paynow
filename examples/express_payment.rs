@@ -21,7 +21,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let reference = "c1dfbc5b-9e5b-40bf-846e-22006078a436";
     let amount = Decimal::new(30_000_00, 2);
     let result_url = Url::parse("https://example.net")?;
-    let auth_email = "billing@webenchanter.com";
+    let auth_email = "billing@example.com";
     let trace_id = Uuid::new_v4().simple().to_string();
     let payment = client.express_payment(
         method,
