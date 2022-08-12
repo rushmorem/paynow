@@ -1,3 +1,5 @@
+//! Payment messages
+
 #[macro_use]
 mod macros {
     #[doc(hidden)]
@@ -30,6 +32,7 @@ use secrecy::Secret;
 use serde::{Deserialize, Serialize};
 use url::Url;
 
+/// Payment
 #[derive(Debug, Clone, Serialize)]
 pub struct Payment<'a> {
     pub(crate) id: u64,
@@ -50,31 +53,37 @@ pub struct Payment<'a> {
 }
 
 impl<'a> Payment<'a> {
+    /// Set additional info
     pub fn additional_info(&mut self, info: &'a str) -> &mut Self {
         self.additional_info = Some(info);
         self
     }
 
+    /// Set auth email
     pub fn auth_email(&mut self, email: &'a str) -> &mut Self {
         self.auth_email = Some(email);
         self
     }
 
+    /// Set merchant trace
     pub fn merchant_trace(&mut self, id: &'a str) -> &mut Self {
         self.merchant_trace = Some(id);
         self
     }
 
+    /// Set tokenize
     pub fn tokenize(&mut self, tokenize: bool) -> &mut Self {
         self.tokenize = Some(tokenize);
         self
     }
 }
 
+/// Message that can be submitted to Paynow
 #[async_trait]
 pub trait Submit {
     type Response;
 
+    /// Submits the message to Paynow
     async fn submit(self, client: &Client) -> Result<Self::Response, Error>;
 }
 
@@ -130,6 +139,7 @@ impl Submit for &'_ Payment<'_> {
     }
 }
 
+/// Paynow response
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Response {
     status: status::Ok,

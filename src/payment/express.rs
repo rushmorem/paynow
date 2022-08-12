@@ -1,3 +1,5 @@
+//! Express payment messages
+
 macro_rules! concat_express_payment {
     ($name:expr, $payment:expr, $method_args:expr) => {
         format_args!(
@@ -31,10 +33,11 @@ use secrecy::Secret;
 use serde::{Deserialize, Serialize};
 use url::Url;
 
+/// Payment method
 #[derive(Debug, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Method<'a> {
-    Ecocash {
+    EcoCash {
         phone: &'a str,
     },
     OneMoney {
@@ -52,7 +55,7 @@ pub enum Method<'a> {
 impl<'a> Method<'a> {
     fn name(&self) -> &'static str {
         match self {
-            Method::Ecocash { .. } => "ecocash",
+            Method::EcoCash { .. } => "ecocash",
             Method::OneMoney { .. } => "onemoney",
             Method::VisaOrMastercard { .. } => "vmc",
         }
@@ -61,7 +64,7 @@ impl<'a> Method<'a> {
     /// Construct `EcoCash` payment method
     #[must_use]
     pub fn eco_cash(phone: &'a str) -> Self {
-        Method::Ecocash { phone }
+        Method::EcoCash { phone }
     }
 
     /// Construct `OneMoney` payment method
@@ -99,7 +102,7 @@ struct MethodArgs<'a> {
 impl<'a> From<&'a Method<'a>> for MethodArgs<'a> {
     fn from(method: &'a Method<'a>) -> Self {
         match method {
-            Method::Ecocash { phone } | Method::OneMoney { phone } => Self {
+            Method::EcoCash { phone } | Method::OneMoney { phone } => Self {
                 phone,
                 ..Default::default()
             },
@@ -124,6 +127,7 @@ impl<'a> From<&'a Method<'a>> for MethodArgs<'a> {
     }
 }
 
+/// Card message
 #[derive(Debug, Clone, Serialize)]
 pub struct Card<'a> {
     #[serde(rename = "cardnumber")]
@@ -136,6 +140,7 @@ pub struct Card<'a> {
     pub expiry: &'a str,
 }
 
+/// Billing address
 #[derive(Debug, Clone, Serialize)]
 pub struct Address<'a> {
     #[serde(rename = "billingline1")]
@@ -150,6 +155,7 @@ pub struct Address<'a> {
     pub country: &'a Country,
 }
 
+/// Payment message
 #[derive(Debug, Clone, Serialize)]
 pub struct Payment<'a> {
     #[serde(flatten)]
@@ -159,11 +165,13 @@ pub struct Payment<'a> {
 }
 
 impl<'a> Payment<'a> {
+    /// Set additional info
     pub fn additional_info(&mut self, info: &'a str) -> &mut Self {
         self.payment.additional_info = Some(info);
         self
     }
 
+    /// Set tokenize
     pub fn tokenize(&mut self, tokenize: bool) -> &mut Self {
         self.payment.tokenize = Some(tokenize);
         self
@@ -233,6 +241,7 @@ impl Submit for &'_ Payment<'_> {
     }
 }
 
+/// Paynow response
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Response {
     status: status::Ok,

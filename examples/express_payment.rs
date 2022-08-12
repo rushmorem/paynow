@@ -1,6 +1,6 @@
 use paynow::payment::express::Method;
 use paynow::payment::Submit;
-use paynow::Client;
+use paynow::{ApiKey, Client};
 use rust_decimal::Decimal;
 use serde::Deserialize;
 use std::error::Error;
@@ -10,7 +10,7 @@ use uuid::Uuid;
 #[derive(Deserialize, Debug)]
 struct Config {
     id: u64,
-    key: Uuid,
+    key: ApiKey,
 }
 
 #[tokio::main]

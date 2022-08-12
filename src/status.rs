@@ -1,3 +1,5 @@
+//! Status related messages
+
 use crate::{Client, Hash};
 use rust_decimal::Decimal;
 use secrecy::Secret;
@@ -40,19 +42,19 @@ impl Update {
 
     /// Get Paynow reference
     #[must_use]
-    pub fn paynow_reference(self) -> u64 {
+    pub fn paynow_reference(&self) -> u64 {
         self.paynow_reference
     }
 
     /// Get amount
     #[must_use]
-    pub fn amount(self) -> Decimal {
+    pub fn amount(&self) -> Decimal {
         self.amount
     }
 
     /// Get status
     #[must_use]
-    pub fn status(self) -> Status {
+    pub fn status(&self) -> Status {
         self.status
     }
 
@@ -160,6 +162,7 @@ impl Token {
     }
 }
 
+/// Payment status
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub enum Status {
     /// Transaction has been created in Paynow, but has not yet been paid by

@@ -29,8 +29,18 @@ use std::fmt::Arguments;
 use url::Url;
 use uuid::Uuid;
 
-#[derive(Clone)]
-struct Key(Uuid);
+/// Paynow API key
+pub type ApiKey = Secret<Key>;
+
+/// Paynow integration key
+#[derive(Clone, Serialize, Deserialize, Eq, Ord, PartialEq, PartialOrd)]
+pub struct Key(Uuid);
+
+impl From<Uuid> for Key {
+    fn from(key: Uuid) -> Self {
+        Self(key)
+    }
+}
 
 impl Zeroize for Key {
     fn zeroize(&mut self) {
@@ -40,6 +50,7 @@ impl Zeroize for Key {
 
 impl CloneableSecret for Key {}
 impl DebugSecret for Key {}
+impl SerializableSecret for Key {}
 
 #[derive(Clone, Serialize, Deserialize, Eq, Ord, PartialEq, PartialOrd)]
 struct Hash(String);
@@ -54,10 +65,11 @@ impl CloneableSecret for Hash {}
 impl DebugSecret for Hash {}
 impl SerializableSecret for Hash {}
 
+/// Paynow client
 #[derive(Debug, Clone)]
 pub struct Client {
     id: u64,
-    key: Secret<Key>,
+    key: ApiKey,
     req: reqwest::Client,
     base: Url,
 }
@@ -66,10 +78,10 @@ impl Client {
     /// Create new client
     #[allow(clippy::missing_panics_doc)]
     #[must_use]
-    pub fn new(id: u64, key: Uuid) -> Self {
+    pub fn new(id: u64, key: ApiKey) -> Self {
         Self {
             id,
-            key: Secret::new(Key(key)),
+            key,
             req: reqwest::Client::new(),
             // we know this is a valid URL so this should never panic
             base: Url::parse("https://www.paynow.co.zw/interface/").unwrap(),
@@ -256,6 +268,7 @@ enum Payload<'a, T: Serialize> {
     Form(&'a T),
 }
 
+/// Error returned by this crate
 #[derive(thiserror::Error, Debug)]
 #[non_exhaustive]
 pub enum Error {
